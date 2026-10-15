@@ -1,9 +1,9 @@
 class AppleMusicDiscordRpc < Formula
   desc "Discord Rich Presence client for the macOS Apple Music app (part-avocado fork)"
   homepage "https://github.com/part-avocado/apple-music-discord-rpc"
-  url "https://github.com/part-avocado/apple-music-discord-rpc/archive/a7b4259fa6d34bebbc18fbc3fd5a12ada0ebcff9.tar.gz"
-  version "0.17.1-pa.1"
-  sha256 "a871b6ed0f15eb55f8d2050c24bb6ab2688bab1ac625570c4a6a26ebcc1e26ae"
+  url "https://github.com/part-avocado/apple-music-discord-rpc/archive/3640603a73198b27a4d0ae5d9d32b1885e65d38f.tar.gz"
+  version "0.17.1-pa.2"
+  sha256 "7c9c2a9d4a8eaba2a9d797f353d5cc7fa74e7308290595657ff6e7910f04551a"
   license "MIT"
   head "https://github.com/part-avocado/apple-music-discord-rpc.git", branch: "main"
 
