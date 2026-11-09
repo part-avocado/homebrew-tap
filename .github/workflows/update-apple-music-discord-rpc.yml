@@ -1,0 +1,49 @@
+name: Update apple-music-discord-rpc
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-apple-music-discord-rpc
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_REPO: partavocado-forks/apple-music-discord-rpc
+      FORMULA: Formula/apple-music-discord-rpc.rb
+    steps:
+      - uses: actions/checkout@v7
+      - name: Point formula at latest release tarball
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$(gh api "repos/${SOURCE_REPO}/releases/latest" -q .tag_name)"
+          version="${tag#v}"
+          url="https://github.com/${SOURCE_REPO}/releases/download/${tag}/apple-music-discord-rpc-${version}.tar.gz"
+          curl -fsSL -o release.tar.gz "$url"
+          sha256="$(sha256sum release.tar.gz | cut -d' ' -f1)"
+          rm release.tar.gz
+
+          sed -i -E \
+            -e "s|^  url \".*\"$|  url \"${url}\"|" \
+            -e "s|^  version \".*\"$|  version \"${version}\"|" \
+            -e "s|^  sha256 \".*\"$|  sha256 \"${sha256}\"|" \
+            -e "s|^  head \"https://github.com/[^/]+/apple-music-discord-rpc.git\"|  head \"https://github.com/${SOURCE_REPO}.git\"|" \
+            "$FORMULA"
+          git diff
+
+          if git diff --quiet; then
+            echo "Formula already points at ${tag}."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -am "apple-music-discord-rpc ${version}"
+          git push
