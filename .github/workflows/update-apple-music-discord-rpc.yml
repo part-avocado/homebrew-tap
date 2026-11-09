@@ -1,4 +1,4 @@
-name: Update apple-music-discord-rpc
+name: Updater
 
 on:
   schedule:
