@@ -1,0 +1,46 @@
+name: Update fftui
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-fftui
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_REPO: part-avocado/fftui
+      FORMULA: Formula/fftui.rb
+    steps:
+      - uses: actions/checkout@v7
+      - name: Point formula at latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$(gh api "repos/${SOURCE_REPO}/releases/latest" -q .tag_name)"
+          url="https://github.com/${SOURCE_REPO}/archive/refs/tags/${tag}.tar.gz"
+          curl -fsSL -o release.tar.gz "$url"
+          sha256="$(sha256sum release.tar.gz | cut -d' ' -f1)"
+          rm release.tar.gz
+
+          sed -i -E \
+            -e "s|^  url \".*\"$|  url \"${url}\"|" \
+            -e "s|^  sha256 \".*\"$|  sha256 \"${sha256}\"|" \
+            "$FORMULA"
+          git diff
+
+          if git diff --quiet; then
+            echo "Formula already points at ${tag}."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -am "fftui ${tag#v}"
+          git push

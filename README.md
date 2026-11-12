@@ -11,3 +11,13 @@ brew install part-avocado/tap/[service]
 
 A patched build of [NextFire/apple-music-discord-rpc](https://github.com/NextFire/apple-music-discord-rpc)
 (pinned to release `0.17.1`, same as the upstream `nextfire/homebrew-tap` formula).
+
+## fftui
+
+[fftui](https://github.com/part-avocado/fftui), a terminal interface for FFmpeg. Built from source; installs FFmpeg too.
+
+```
+brew install part-avocado/tap/fftui
+```
+
+`.github/workflows/update-fftui.yml` points the formula at each new fftui release.
